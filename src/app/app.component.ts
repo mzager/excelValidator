@@ -1,3 +1,4 @@
+import { DataAccess } from './data.access';
 /// <reference types='@types/office-js' />
 import { Component } from '@angular/core';
 
@@ -40,7 +41,14 @@ export class AppComponent {
     }
   };
 
+  private myWs: Excel.Worksheet;
   validate(): void {
+
+    const da = new DataAccess();
+    da.getSheet('asdf').then( function (worksheet) {
+        this.myWs = worksheet;
+    });
+
 
     Excel.run(async (context) => {
       this.output = context.workbook.worksheets.items.toString() + '!!!';

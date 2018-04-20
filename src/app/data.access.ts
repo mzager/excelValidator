@@ -1,7 +1,4 @@
-
 export class DataAccess {
-
-    // private _excel: Excel.RequestContext;
 
     public getSheet(name: string): Promise<Excel.Worksheet> {
         // Function Returns a promise of a value in the future
@@ -27,8 +24,5 @@ export class DataAccess {
         return new Promise( (resolve, reject) => {
             resolve('asdf');
         });
-    }
-    constructor(excel: Excel.RequestContext) {
-        // this._excel = excel;
     }
 }
