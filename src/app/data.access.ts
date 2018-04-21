@@ -20,6 +20,22 @@ export class DataAccess {
         });
     }
 
+    public getValue(row: number, col: number): Promise<Excel.Worksheet> {
+        // Function Returns a promise of a value in the future
+        return new Promise( (resolve, reject) => {
+            // Go fetch the worksheet... this won't happen immediately...
+            Excel.run( async context => {
+
+                // Create queue of commands to get the value                
+
+                // Request the value "then" wait for it...
+                context.sync().then(() => {
+                    // Got the value, now resolve
+                });
+            });
+        });
+    }
+
     public emptyPromise(): Promise<string> {
         return new Promise( (resolve, reject) => {
             resolve('asdf');
