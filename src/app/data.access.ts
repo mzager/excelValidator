@@ -27,7 +27,7 @@ export class DataAccess {
             Excel.run(async context => {
                 // Create queue of commands to get the value                
 
-                // const cellRange = thisSheet.getRange(row, col);
+                // const cellRange = thisSheet.getRange(row, col).load("values");
 
                 // Request the value "then" wait for it...
                 context.sync().then(() => {
