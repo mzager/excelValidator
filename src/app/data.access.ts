@@ -31,10 +31,28 @@ export class DataAccess {
 
                 // Request the value "then" wait for it...
                 context.sync().then(() => {
-                    // const cellValue = cellRange[0][0];
+                    // const cellValue = cellRange.values[0][0];
 
                     // Got the value, now resolve
                     // resolve(cellValue);
+                });
+            });
+        });
+    }
+
+    public getColumn(col: string): Promise<Array<string | number | boolean>> {
+        return new Promise((resolve, reject) => {
+            Excel.run(async context => {
+                // Create queue of commands to get the value                
+
+                // const cellRange = thisSheet.getRange(col + ":" + col).load("values");
+
+                // Request the value "then" wait for it...
+                context.sync().then(() => {
+                    // const colValues = cellRange.values;
+
+                    // Got the value, now resolve
+                    // resolve(colValues);
                 });
             });
         });
