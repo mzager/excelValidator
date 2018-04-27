@@ -1,3 +1,4 @@
+import { UploadService } from './aws.model';
 import { DataAccess } from './data.access';
 /// <reference types='@types/office-js' />
 import { Component } from '@angular/core';
@@ -45,14 +46,13 @@ export class AppComponent {
   validate(): void {
 
     const da = new DataAccess();
-    da.setActiveSheet('asdf').then( sheet => { 
+    da.setActiveSheet('asdf').then( sheet => {
 
     });
 
     da.getSheet('asdf').then( function (worksheet) {
         this.myWs = worksheet;
     });
-
 
     Excel.run(async (context) => {
       this.output = context.workbook.worksheets.items.toString() + '!!!';
