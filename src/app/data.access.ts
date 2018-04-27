@@ -52,7 +52,7 @@ export class DataAccess {
         });
     }
 
-    public getColumn(col: string): Promise<Array<string | number | boolean>> {
+    public getColumnValues(col: string): Promise<Array<string | number | boolean>> {
         return new Promise((resolve, reject) => {
             Excel.run(async context => {
                 // Create queue of commands to get the value
