@@ -45,6 +45,10 @@ export class AppComponent {
   validate(): void {
 
     const da = new DataAccess();
+    da.setActiveSheet('asdf').then( sheet => { 
+
+    });
+
     da.getSheet('asdf').then( function (worksheet) {
         this.myWs = worksheet;
     });

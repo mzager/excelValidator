@@ -1,6 +1,17 @@
 
 export class DataAccess {
 
+    private _activeSheet: Excel.Worksheet;
+
+    public setActiveSheet(name: string): Promise<Excel.Worksheet> {
+        return new Promise( (resolve, reject) => {
+            this.getSheet(name).then( sheet => {
+                this._activeSheet = sheet;
+                resolve(sheet);
+            });
+        });
+    }
+
     public getSheet(name: string): Promise<Excel.Worksheet> {
         // Function Returns a promise of a value in the future
         return new Promise((resolve, reject) => {
@@ -28,7 +39,7 @@ export class DataAccess {
             Excel.run(async context => {
                 // Create queue of commands to get the value
 
-                // const cellRange = thisSheet.getRange(row, col).load("values");
+                const cellRange = this._activeSheet.getCell(row, col).load('values');
 
                 // Request the value "then" wait for it...
                 context.sync().then(() => {
@@ -44,7 +55,7 @@ export class DataAccess {
     public getColumn(col: string): Promise<Array<string | number | boolean>> {
         return new Promise((resolve, reject) => {
             Excel.run(async context => {
-                // Create queue of commands to get the value                
+                // Create queue of commands to get the value
 
                 // const cellRange = thisSheet.getRange(col + ":" + col).load("values");
 
