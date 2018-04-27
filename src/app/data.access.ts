@@ -1,3 +1,4 @@
+
 export class DataAccess {
 
     public getSheet(name: string): Promise<Excel.Worksheet> {
@@ -20,12 +21,12 @@ export class DataAccess {
         });
     }
 
-    // The value returned could be a string, number, or boolean depending on the 
+    // The value returned could be a string, number, or boolean depending on the
     // cell type
     public getValue(row: number, col: number): Promise<string | number | boolean> {
         return new Promise((resolve, reject) => {
             Excel.run(async context => {
-                // Create queue of commands to get the value                
+                // Create queue of commands to get the value
 
                 // const cellRange = thisSheet.getRange(row, col).load("values");
 

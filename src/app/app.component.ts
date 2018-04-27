@@ -1,7 +1,7 @@
 import { DataAccess } from './data.access';
 /// <reference types='@types/office-js' />
 import { Component } from '@angular/core';
-
+declare var Excel;
 
 @Component({
   selector: 'app-root',
