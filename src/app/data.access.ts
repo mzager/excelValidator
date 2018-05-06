@@ -52,12 +52,25 @@ export class DataAccess {
         });
     }
 
+    // Sets the value of a specified cell
+    public setValue(row: number, col: number, value: any) {
+        Excel.run(async context => {
+            
+            const cellRange = this._activeSheet.getCell(row, col).load('values');
+
+            context.sync().then(() => {
+                cellRange.values[0][0] = value;
+            });
+
+        });
+    }
+
     public getColumnValues(col: string): Promise<Array<any>> {
         return new Promise((resolve, reject) => {
             Excel.run(async context => {
                 // Create queue of commands to get the value
 
-                const cellRange = this._activeSheet.getRange(col + ":" + col).load("values");
+                const cellRange = this._activeSheet.getRange(col + ":" + col).load('values');
                 const conditionalFormat = cellRange.conditionalFormats
                     .add(Excel.ConditionalFormatType.containsText);
                 conditionalFormat.textComparison
@@ -87,12 +100,16 @@ export class DataAccess {
                 for (var i = 0; i < vals.length; i++) {
                     for (var z = 0; z < vals[i].length; z++) {
                         if (duplicateValues.has(vals[i][z])) {
+                            // If it's a duplicate, add the cell address with the form
+                            // (i, z) relative to the range, not the sheet
                             duplicateCoords.push("(" + i + ", " + z + ")");
                         } else {
                             duplicateValues.add(vals[i][z]);
                         }
                     }
                 }
+                // Log the coordinates of the duplicates, coords are relative
+                // to the range not the sheet
                 console.log(duplicateCoords.toString());
             });
 
