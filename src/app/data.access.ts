@@ -4,8 +4,8 @@ export class DataAccess {
     private _activeSheet: Excel.Worksheet;
 
     public setActiveSheet(name: string): Promise<Excel.Worksheet> {
-        return new Promise( (resolve, reject) => {
-            this.getSheet(name).then( sheet => {
+        return new Promise((resolve, reject) => {
+            this.getSheet(name).then(sheet => {
                 this._activeSheet = sheet;
                 resolve(sheet);
             });
@@ -34,7 +34,7 @@ export class DataAccess {
 
     // The value returned could be a string, number, or boolean depending on the
     // cell type
-    public getValue(row: number, col: number): Promise<string | number | boolean> {
+    public getValue(row: number, col: number): Promise<any> {
         return new Promise((resolve, reject) => {
             Excel.run(async context => {
                 // Create queue of commands to get the value
@@ -43,30 +43,59 @@ export class DataAccess {
 
                 // Request the value "then" wait for it...
                 context.sync().then(() => {
-                    // const cellValue = cellRange.values[0][0];
+                    const cellValue = cellRange.values[0][0];
 
                     // Got the value, now resolve
-                    // resolve(cellValue);
+                    resolve(cellValue);
                 });
             });
         });
     }
 
-    public getColumnValues(col: string): Promise<Array<string | number | boolean>> {
+    public getColumnValues(col: string): Promise<Array<any>> {
         return new Promise((resolve, reject) => {
             Excel.run(async context => {
                 // Create queue of commands to get the value
 
-                // const cellRange = thisSheet.getRange(col + ":" + col).load("values");
-
+                const cellRange = this._activeSheet.getRange(col + ":" + col).load("values");
+                const conditionalFormat = cellRange.conditionalFormats
+                    .add(Excel.ConditionalFormatType.containsText);
+                conditionalFormat.textComparison
                 // Request the value "then" wait for it...
                 context.sync().then(() => {
-                    // const colValues = cellRange.values;
+                    const colValues = cellRange.values;
 
                     // Got the value, now resolve
-                    // resolve(colValues);
+                    resolve(colValues);
                 });
             });
+        });
+    }
+
+    public logDuplicates(rangeToCheck: string) {
+
+        Excel.run(async (context) => {
+            // Get the values in the range
+            const cellRange = this._activeSheet.getRange(rangeToCheck).load("values");;
+
+            await context.sync().then(() => {
+                // Create a set to store unique vals, array for coords, and get range values
+                const duplicateValues = new Set();
+                const duplicateCoords = new Array();
+                const vals = cellRange.values;
+                // Iterate and check for duplicates
+                for (var i = 0; i < vals.length; i++) {
+                    for (var z = 0; z < vals[i].length; z++) {
+                        if (duplicateValues.has(vals[i][z])) {
+                            duplicateCoords.push("(" + i + ", " + z + ")");
+                        } else {
+                            duplicateValues.add(vals[i][z]);
+                        }
+                    }
+                }
+                console.log(duplicateCoords.toString());
+            });
+
         });
     }
 
