@@ -103,8 +103,12 @@ export class DataAccess {
                             // If it's a duplicate, add the cell address with the form
                             // (i, z) relative to the range, not the sheet
                             duplicateCoords.push("(" + i + ", " + z + ")");
+                            // Turns the cell red
+                            cellRange.getCell(i, z).format.fill.color = "#ff0000";
                         } else {
                             duplicateValues.add(vals[i][z]);
+                            // Removes any color if the cell was red
+                            cellRange.getCell(i, z).format.fill.clear();
                         }
                     }
                 }
