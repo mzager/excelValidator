@@ -55,7 +55,7 @@ export class DataAccess {
     // Sets the value of a specified cell
     public setValue(row: number, col: number, value: any) {
         Excel.run(async context => {
-            
+
             const cellRange = this._activeSheet.getCell(row, col).load('values');
 
             context.sync().then(() => {
@@ -85,38 +85,40 @@ export class DataAccess {
         });
     }
 
-    public logDuplicates(rangeToCheck: string) {
+    public logDuplicates(rangeToCheck: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            Excel.run(async (context) => {
+                // Get the values in the range
+                const cellRange = this._activeSheet.getRange(rangeToCheck).load("values");
 
-        Excel.run(async (context) => {
-            // Get the values in the range
-            const cellRange = this._activeSheet.getRange(rangeToCheck).load("values");;
-
-            await context.sync().then(() => {
-                // Create a set to store unique vals, array for coords, and get range values
-                const duplicateValues = new Set();
-                const duplicateCoords = new Array();
-                const vals = cellRange.values;
-                // Iterate and check for duplicates
-                for (var i = 0; i < vals.length; i++) {
-                    for (var z = 0; z < vals[i].length; z++) {
-                        if (duplicateValues.has(vals[i][z])) {
-                            // If it's a duplicate, add the cell address with the form
-                            // (i, z) relative to the range, not the sheet
-                            duplicateCoords.push("(" + i + ", " + z + ")");
-                            // Turns the cell red
-                            cellRange.getCell(i, z).format.fill.color = "#ff0000";
-                        } else {
-                            duplicateValues.add(vals[i][z]);
-                            // Removes any color if the cell was red
-                            cellRange.getCell(i, z).format.fill.clear();
+                await context.sync().then(() => {
+                    // Create a set to store unique vals, array for coords, and get range values
+                    const duplicateValues = new Set();
+                    const duplicateCoords = new Array();
+                    const vals = cellRange.values;
+                    // Iterate and check for duplicates
+                    for (var i = 0; i < vals.length; i++) {
+                        for (var z = 0; z < vals[i].length; z++) {
+                            if (duplicateValues.has(vals[i][z])) {
+                                // If it's a duplicate, add the cell address with the form
+                                // (i, z) relative to the range, not the sheet
+                                duplicateCoords.push("(" + i + ", " + z + ")");
+                                // Turns the cell red
+                                cellRange.getCell(i, z).format.fill.color = "#ff0000";
+                            } else {
+                                duplicateValues.add(vals[i][z]);
+                                // Removes any color if the cell was reds
+                                cellRange.getCell(i, z).format.fill.clear();
+                            }
                         }
                     }
-                }
-                // Log the coordinates of the duplicates, coords are relative
-                // to the range not the sheet
-                console.log(duplicateCoords.toString());
-            });
+                    // Log the coordinates of the duplicates, coords are relative
+                    // to the range not the sheet
+                    console.log(duplicateCoords.toString());
+                    resolve();
+                });
 
+            });
         });
     }
 
