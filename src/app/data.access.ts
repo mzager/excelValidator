@@ -122,6 +122,55 @@ export class DataAccess {
         });
     }
 
+    public logNotInBaseline(baselineRange: string, toCompareRange: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            Excel.run(async (context) => {
+                // Get the given range from the first sheet (Baseline data)
+                const sheet = context.workbook.worksheets.getItem("Sheet1");
+                const range = sheet.getRange(baselineRange).load("values");
+
+                // Get the range from the sheet to be compared against the baseline data
+                const sheet2 = context.workbook.worksheets.getItem("Sheet2");
+                const range2 = sheet2.getRange(toCompareRange).load("values");
+
+                // Creates the two sets to compare against each other
+                var baselineValues = new Set();
+                var valsToCompare = new Set();
+
+                await context.sync().then(() => {
+                    // Collect the unique values in the given range of the baseline data
+                    const vals = range.values;
+                    for (var i = 0; i < vals.length; i++) {
+                        if (!baselineValues.has(vals[i])) {
+                            baselineValues.add(vals[i] + "");
+                        }
+                    }
+                    baselineValues.delete("");
+                }).then(() => {
+                    // Collect the unique values in the given range of the event data
+                    const vals = range2.values;
+                    for (var i = 0; i < vals.length; i++) {
+                        if (!valsToCompare.has(vals[i])) {
+                            valsToCompare.add(vals[i] + "");
+                        }
+                    }
+                    valsToCompare.delete("");
+                }).then(() => {
+                    // Compares the two sets and logs any entries that are present in 
+                    // the event data but not in baseline
+                    let b = Array.from(valsToCompare);
+                    for (var i = 0; i < b.length; i++) {
+                        if (!valsToCompare.has(b[i] + "")) {
+                            console.log(b[i] + "");
+                        }
+                    }
+                });
+
+
+            });
+        });
+    }
+
     public emptyPromise(): Promise<string> {
         return new Promise((resolve, reject) => {
             resolve('asdf');
