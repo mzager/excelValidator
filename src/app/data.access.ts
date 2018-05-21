@@ -165,8 +165,7 @@ export class DataAccess {
                         }
                     }
                 });
-
-
+                resolve();
             });
         });
     }
