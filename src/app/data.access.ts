@@ -122,7 +122,7 @@ export class DataAccess {
         });
     }
 
-    public logNotInBaseline(baselineRange: string, toCompareRange: string): Promise<void> {
+    public logNotInBaseline(baselineRange: string, toCompareRange: string): Promise<Array<any>> {
         return new Promise((resolve, reject) => {
             Excel.run(async (context) => {
                 // Get the given range from the first sheet (Baseline data)
@@ -138,34 +138,24 @@ export class DataAccess {
                 var valsToCompare = new Set();
 
                 await context.sync().then(() => {
-                    // Collect the unique values in the given range of the baseline data
-                    const vals = range.values;
-                    for (var i = 0; i < vals.length; i++) {
-                        if (!baselineValues.has(vals[i])) {
-                            baselineValues.add(vals[i] + "");
-                        }
-                    }
+                    // Collect the unique values in the given ranges
+                    baselineValues = new Set(range.values);
+                    valsToCompare = new Set(range2.values);
                     baselineValues.delete("");
-                }).then(() => {
-                    // Collect the unique values in the given range of the event data
-                    const vals = range2.values;
-                    for (var i = 0; i < vals.length; i++) {
-                        if (!valsToCompare.has(vals[i])) {
-                            valsToCompare.add(vals[i] + "");
-                        }
-                    }
                     valsToCompare.delete("");
-                }).then(() => {
-                    // Compares the two sets and logs any entries that are present in 
-                    // the event data but not in baseline
-                    let b = Array.from(valsToCompare);
-                    for (var i = 0; i < b.length; i++) {
-                        if (!valsToCompare.has(b[i] + "")) {
-                            console.log(b[i] + "");
-                        }
-                    }
+
+                    // Get the values that are in sheet 2 but not in sheet 1
+                    var inSheet2NotSheet1 = new Set(Array.from(valsToCompare).filter(x => !baselineValues.has(x)));
+                    
+                    // Get the indexes in sheet 2 of the values found above
+                    var indexesOfMissingSheet2Items = range2.values.reduce((result, curr, index) => {
+                        if (inSheet2NotSheet1.has(curr)) { result.push(index); }
+                        return result;
+                    });
+
+                    resolve(indexesOfMissingSheet2Items);
                 });
-                resolve();
+                
             });
         });
     }
